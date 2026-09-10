@@ -24,7 +24,7 @@ function Mast({ compact }: { compact: boolean }) {
   const segH = MAST_HEIGHT / sections;
 
   const legMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: STEEL, metalness: 0.75, roughness: 0.45 }),
+    () => new THREE.MeshStandardMaterial({ color: "#8b8880", metalness: 0.6, roughness: 0.5 }),
     [],
   );
   const braceMat = useMemo(
@@ -104,7 +104,7 @@ function Dish({
     <group position={position} rotation={rotation} scale={scale}>
       <mesh castShadow>
         <sphereGeometry args={[0.55, 20, 12, 0, Math.PI * 2, 0, Math.PI / 3]} />
-        <meshStandardMaterial color="#8d8a84" metalness={0.5} roughness={0.55} side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#a9a59d" metalness={0.35} roughness={0.6} side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0, -0.28, 0]}>
         <cylinderGeometry args={[0.04, 0.04, 0.55, 6]} />
@@ -212,7 +212,7 @@ function NodeMarker({
       <Html
         position={[Math.cos(angle) * 0.4, 0.02, Math.sin(angle) * 0.4]}
         center={false}
-        distanceFactor={9}
+        distanceFactor={16}
         zIndexRange={[10, 0]}
       >
         <button
@@ -247,18 +247,18 @@ function Tower({ progress, activeNode, onSelect, reduced, compact }: SceneProps)
   useFrame((_, delta) => {
     const p = progress.current;
     target.current.rot = reduced ? -0.5 : -0.5 - p * Math.PI * 1.1;
-    target.current.y = 8.5 - p * 6.5;
+    target.current.y = 5.2 - p * 4.6;
     const dt = Math.min(delta, 0.05);
     const k = 1 - Math.exp(-2.5 * dt);
     if (group.current) {
       group.current.rotation.y += (target.current.rot - group.current.rotation.y) * k;
     }
     const camY = target.current.y;
-    const camZ = compact ? 22 - p * 2 : 17 - p * 2;
+    const camZ = compact ? 40 - p * 3 : 30 - p * 3;
     camera.position.y += (camY - camera.position.y) * k;
     camera.position.z += (camZ - camera.position.z) * k;
     camera.position.x += ((compact ? 0 : 1.2) - camera.position.x) * k;
-    camera.lookAt(0, camY - 1.4, 0);
+    camera.lookAt(0, camY - 2.2, 0);
   });
 
   const nodeAngles = useMemo(() => nodes.map((_, i) => (i / nodes.length) * Math.PI * 2 * 1.4), []);
@@ -326,20 +326,20 @@ function TowerScene(props: SceneProps) {
       shadows={!props.compact}
       dpr={[1, props.compact ? 1.5 : 2]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
-      camera={{ fov: 32, position: [1.2, 8.5, props.compact ? 22 : 17] }}
+      camera={{ fov: 32, position: [1.2, 5.2, props.compact ? 40 : 30] }}
       frameloop="always"
     >
       <color attach="background" args={["#0e0d0c"]} />
-      <fog attach="fog" args={["#0e0d0c", 22, 52]} />
-      <hemisphereLight args={["#4a4844", "#0b0a09", 0.5]} />
+      <fog attach="fog" args={["#0e0d0c", 34, 80]} />
+      <hemisphereLight args={["#5c5952", "#0b0a09", 0.9]} />
       <directionalLight
         position={[8, 16, 6]}
-        intensity={1.5}
+        intensity={2.4}
         color="#cfcabf"
         castShadow={!props.compact}
         shadow-mapSize={[1024, 1024]}
       />
-      <directionalLight position={[-10, 6, -8]} intensity={0.5} color="#8a8580" />
+      <directionalLight position={[-12, 7, -6]} intensity={0.9} color="#9a948c" />
       <pointLight position={[0, 2, 4]} intensity={12} distance={14} color="#c2551f" />
       <Ground />
       <Tower {...props} />
