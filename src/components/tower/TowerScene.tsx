@@ -301,7 +301,7 @@ function Tower({ progress, activeNode, onSelect, reduced, compact }: SceneProps)
           code={n.code}
           label={n.label}
           y={1.8 + i * ((MAST_HEIGHT - 3.4) / (nodes.length - 1))}
-          angle={nodeAngles[i]}
+          angle={nodeAngles[i] ?? 0}
           active={activeNode === n.id}
           onSelect={onSelect}
           reduced={reduced}
