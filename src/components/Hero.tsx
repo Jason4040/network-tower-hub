@@ -3,7 +3,7 @@ import { CV_URL, profile } from "../data/profile";
 
 export default function Hero({ onProjects }: { onProjects: () => void }) {
   return (
-    <section id="top" aria-labelledby="hero-title" className="pt-24 pb-20 lg:pt-28 lg:pb-32">
+    <section id="top" aria-labelledby="hero-title" className="bg-background pt-24 pb-20 lg:bg-transparent lg:pt-28 lg:pb-32">
       <p className="label-tech">NETWORK / INFRASTRUCTURE / SECURITY</p>
       <h1
         id="hero-title"

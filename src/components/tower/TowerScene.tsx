@@ -173,6 +173,7 @@ function NodeMarker({
   active,
   onSelect,
   reduced,
+  compact,
 }: {
   id: NodeId;
   code: string;
@@ -182,6 +183,7 @@ function NodeMarker({
   active: boolean;
   onSelect: (id: NodeId) => void;
   reduced: boolean;
+  compact: boolean;
 }) {
   const ref = useRef<THREE.Mesh>(null);
   const [hover, setHover] = useState(false);
@@ -209,6 +211,7 @@ function NodeMarker({
         <sphereGeometry args={[0.06, 10, 8]} />
         <meshBasicMaterial color={ACCENT} />
       </mesh>
+      {compact ? null : (
       <Html
         position={[Math.cos(angle) * 0.4, 0.02, Math.sin(angle) * 0.4]}
         center={false}
@@ -235,6 +238,7 @@ function NodeMarker({
           <span>{label}</span>
         </button>
       </Html>
+      )}
     </group>
   );
 }
@@ -305,6 +309,7 @@ function Tower({ progress, activeNode, onSelect, reduced, compact }: SceneProps)
           active={activeNode === n.id}
           onSelect={onSelect}
           reduced={reduced}
+          compact={compact}
         />
       ))}
     </group>
