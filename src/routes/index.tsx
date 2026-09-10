@@ -80,9 +80,10 @@ function Home() {
 
       <Navigation active={active} onNavigate={go} />
 
-      <main className="relative z-10 mx-auto max-w-[1500px] px-4 sm:px-6">
-        <div className="lg:w-[52%]">
+      <main className="pointer-events-none relative z-10 mx-auto max-w-[1500px] px-4 sm:px-6">
+        <div className="pointer-events-auto lg:w-[52%]">
           <Hero onProjects={() => go("projects")} />
+          <div className="pointer-events-none h-[42vh] lg:hidden" aria-hidden="true" />
           <About />
           <Skills />
           <Projects />
