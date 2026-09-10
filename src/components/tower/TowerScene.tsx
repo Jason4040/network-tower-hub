@@ -258,11 +258,11 @@ function Tower({ progress, activeNode, onSelect, reduced, compact }: SceneProps)
       group.current.rotation.y += (target.current.rot - group.current.rotation.y) * k;
     }
     const camY = target.current.y;
-    const camZ = compact ? 40 - p * 3 : 30 - p * 3;
+    const camZ = compact ? 32 - p * 3 : 30 - p * 3;
     camera.position.y += (camY - camera.position.y) * k;
     camera.position.z += (camZ - camera.position.z) * k;
     camera.position.x += ((compact ? 0 : 1.2) - camera.position.x) * k;
-    camera.lookAt(0, camY - 3.0, 0);
+    camera.lookAt(0, camY - (compact ? 0.2 : 3.0), 0);
   });
 
   const nodeAngles = useMemo(() => nodes.map((_, i) => (i / nodes.length) * Math.PI * 2 * 1.4), []);
