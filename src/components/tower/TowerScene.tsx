@@ -9,11 +9,11 @@ const STEEL = "#6b6862";
 const DARK_STEEL = "#3a3835";
 
 type SceneProps = {
-  progress: React.MutableRefObject<number>;
-  activeNode: NodeId | null;
+  activeNode: NodeId;
   onSelect: (id: NodeId) => void;
   reduced: boolean;
   compact: boolean;
+  selectedIndex: number;
 };
 
 const MAST_HEIGHT = 13;
@@ -243,26 +243,26 @@ function NodeMarker({
   );
 }
 
-function Tower({ progress, activeNode, onSelect, reduced, compact }: SceneProps) {
+function Tower({ activeNode, onSelect, reduced, compact, selectedIndex }: SceneProps) {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
-  const target = useRef({ y: 6, rot: 0 });
+  const target = useRef({ y: compact ? 6 : 5.5, rot: 0 });
 
-  useFrame((_, delta) => {
-    const p = progress.current;
-    target.current.rot = reduced ? -0.5 : -0.5 - p * Math.PI * 1.1;
-    target.current.y = 5.2 - p * 4.6;
+  useFrame(({ clock }, delta) => {
+    const idle = reduced ? 0 : Math.sin(clock.elapsedTime * 0.32) * 0.08;
+    target.current.rot = -0.5 - selectedIndex * ((Math.PI * 2) / nodes.length) + idle;
+    target.current.y = compact ? 6 : 5.5;
     const dt = Math.min(delta, 0.05);
     const k = 1 - Math.exp(-2.5 * dt);
     if (group.current) {
       group.current.rotation.y += (target.current.rot - group.current.rotation.y) * k;
     }
     const camY = target.current.y;
-    const camZ = compact ? 32 - p * 3 : 30 - p * 3;
+    const camZ = compact ? 38 : 30;
     camera.position.y += (camY - camera.position.y) * k;
     camera.position.z += (camZ - camera.position.z) * k;
     camera.position.x += ((compact ? 0 : 1.2) - camera.position.x) * k;
-    camera.lookAt(0, camY - (compact ? 0.2 : 3.0), 0);
+    camera.lookAt(0, camY - (compact ? 1 : 3), 0);
   });
 
   const nodeAngles = useMemo(() => nodes.map((_, i) => (i / nodes.length) * Math.PI * 2 * 1.4), []);
