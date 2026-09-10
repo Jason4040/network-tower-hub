@@ -1,4 +1,4 @@
-import { Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { Link2, Mail, MapPin, Phone } from "lucide-react";
 import { contact } from "../../data/contact";
 import { SectionShell } from "../ui-tech/Panel";
 
@@ -7,7 +7,7 @@ export default function Contact() {
     { icon: MapPin, label: "LOCATION", value: contact.location, href: undefined },
     { icon: Phone, label: "PHONE", value: contact.phone, href: contact.phoneHref },
     { icon: Mail, label: "EMAIL", value: contact.email, href: `mailto:${contact.email}` },
-    { icon: Linkedin, label: "LINKEDIN", value: contact.linkedinLabel, href: contact.linkedinUrl },
+    { icon: Link2, label: "LINKEDIN", value: contact.linkedinLabel, href: contact.linkedinUrl },
   ];
 
   return (

@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
-import { ExternalLink, FileText, Github } from "lucide-react";
+import { Code2, ExternalLink, FileText } from "lucide-react";
 import { projects, type Project } from "../../data/projects";
 import { SectionShell, Tag, TechPanel } from "../ui-tech/Panel";
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <TechPanel active={project.featured}>
+    <TechPanel active={project.featured ?? false}>
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-[11px] tracking-wide text-accent">{project.year}</span>
         <h3 className="text-base font-medium">{project.title}</h3>
@@ -30,7 +30,7 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="mt-4 flex flex-wrap gap-4 font-mono text-[11px] tracking-[0.12em]">
         {project.github ? (
           <a className="flex items-center gap-1.5 text-muted-foreground hover:text-accent" href={project.github}>
-            <Github size={13} /> CODE
+            <Code2 size={13} /> CODE
           </a>
         ) : null}
         {project.live ? (
