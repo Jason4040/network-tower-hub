@@ -258,7 +258,7 @@ function Tower({ progress, activeNode, onSelect, reduced, compact }: SceneProps)
     camera.position.y += (camY - camera.position.y) * k;
     camera.position.z += (camZ - camera.position.z) * k;
     camera.position.x += ((compact ? 0 : 1.2) - camera.position.x) * k;
-    camera.lookAt(0, camY - 2.2, 0);
+    camera.lookAt(0, camY - 3.0, 0);
   });
 
   const nodeAngles = useMemo(() => nodes.map((_, i) => (i / nodes.length) * Math.PI * 2 * 1.4), []);
@@ -331,10 +331,11 @@ function TowerScene(props: SceneProps) {
     >
       <color attach="background" args={["#0e0d0c"]} />
       <fog attach="fog" args={["#0e0d0c", 34, 80]} />
-      <hemisphereLight args={["#5c5952", "#0b0a09", 0.9]} />
+      <ambientLight intensity={0.35} color="#8d8880" />
+      <hemisphereLight args={["#6d6a62", "#0b0a09", 1.1]} />
       <directionalLight
         position={[8, 16, 6]}
-        intensity={2.4}
+        intensity={3.1}
         color="#cfcabf"
         castShadow={!props.compact}
         shadow-mapSize={[1024, 1024]}
