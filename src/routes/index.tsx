@@ -37,6 +37,6 @@ function Home() {
         <TowerStage activeNode={active} onSelect={go} selectedIndex={selectedIndex} />
       </div>
       <TowerPortfolio active={active} onSelect={go} />
-    </div>
+    </main>
   );
 }
