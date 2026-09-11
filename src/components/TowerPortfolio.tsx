@@ -33,7 +33,7 @@ function Tags({ items }: { items: readonly string[] }) {
   );
 }
 
-function CardContent({ id }: { id: NodeId }) {
+export function CardContent({ id }: { id: NodeId }) {
   if (id === "about") {
     return (
       <>
@@ -160,27 +160,10 @@ export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps
     return () => window.removeEventListener("keydown", onKey);
   }, [activeIndex, onSelect]);
 
-  const positions = useMemo(() => nodes.map((node, index) => {
-    const relative = (index - activeIndex + nodes.length) % nodes.length;
-    const signed = relative > nodes.length / 2 ? relative - nodes.length : relative;
-    return { node, signed };
-  }), [activeIndex]);
-
   const move = (step: number) => {
     const next = nodes[(activeIndex + step + nodes.length) % nodes.length];
     if (next) onSelect(next.id);
     setPaused(true);
-  };
-
-  const current = nodes[activeIndex] ?? nodes[0];
-  const cardSlots: Record<number, string> = {
-    0: "left-[5%] top-[19%] z-20 opacity-100",
-    1: "right-[6%] top-[26%] z-10 opacity-70",
-    2: "right-[4%] top-[50%] z-10 opacity-45",
-    3: "right-[21%] top-[73%] z-0 opacity-25",
-    [-1]: "left-[6%] top-[48%] z-10 opacity-70",
-    [-2]: "left-[20%] top-[72%] z-0 opacity-35",
-    [-3]: "right-[32%] top-[82%] z-0 opacity-20",
   };
 
   return (
@@ -191,32 +174,6 @@ export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps
           <span className="pulse-dot h-1.5 w-1.5 bg-accent" /> NETWORKING / CLOUD SECURITY
         </p>
       </div>
-
-      <div className="hidden lg:block" aria-label="Portfolio card orbit">
-        {positions.map(({ node, signed }) => (
-          <Button
-            key={node.id}
-            variant="outline"
-            onClick={() => { onSelect(node.id); setPaused(true); }}
-            className={`absolute pointer-events-auto h-auto w-44 justify-start rounded-none border bg-background/90 px-4 py-3 text-left backdrop-blur transition-all duration-700 ${cardSlots[signed] ?? "pointer-events-none opacity-0"} ${signed === 0 ? "border-accent" : "border-border"}`}
-            aria-pressed={signed === 0}
-          >
-            <span className="font-mono text-[10px] text-accent">{node.code}</span>
-            <span className="ml-auto font-display text-xs tracking-[0.08em] text-foreground">{node.label}</span>
-          </Button>
-        ))}
-      </div>
-
-      <section className="pointer-events-auto absolute bottom-20 left-4 right-4 max-h-[39vh] overflow-y-auto border border-border bg-background/94 p-4 backdrop-blur-md sm:left-7 sm:right-auto sm:w-[28rem] sm:p-5 lg:bottom-8 lg:left-auto lg:right-8 lg:top-[16%] lg:max-h-[68vh] lg:w-[24rem]" aria-live="polite">
-        <header className="mb-4 flex items-baseline gap-3 border-b border-border pb-3">
-          <span className="font-mono text-[10px] text-accent">{current.code}</span>
-          <h2 className="text-xl">{current.label}</h2>
-          <span className="ml-auto font-mono text-[10px] text-muted-foreground">{String(activeIndex + 1).padStart(2, "0")} / {String(nodes.length).padStart(2, "0")}</span>
-        </header>
-        <div className="space-y-4 text-sm leading-relaxed text-foreground/85">
-          <CardContent id={current.id} />
-        </div>
-      </section>
 
       <div className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
         <Button variant="outline" size="icon" className="size-11 rounded-none border-border-strong bg-background/90" onClick={() => move(-1)} aria-label="Previous portfolio card"><ArrowLeft /></Button>
