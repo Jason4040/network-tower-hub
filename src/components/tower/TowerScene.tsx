@@ -14,6 +14,7 @@ type SceneProps = {
   reduced: boolean;
   compact: boolean;
   selectedIndex: number;
+  renderCard: (id: NodeId) => ReactNode;
 };
 
 const MAST_HEIGHT = 13;
@@ -174,6 +175,7 @@ function NodeMarker({
   onSelect,
   reduced,
   compact,
+  renderCard,
 }: {
   id: NodeId;
   code: string;
