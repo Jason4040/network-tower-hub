@@ -222,11 +222,13 @@ function NodeMarker({
         distanceFactor={16}
         zIndexRange={[10, 0]}
       >
+        <div
+          onPointerEnter={() => setHover(true)}
+          onPointerLeave={() => { setHover(false); setPinned(false); }}
+        >
         <button
           type="button"
-          onClick={() => { setPinned(true); onSelect(id); }}
-          onPointerEnter={() => setHover(true)}
-          onPointerLeave={() => setHover(false)}
+          onClick={() => { setPinned((current) => !current); onSelect(id); }}
           className="flex min-h-[28px] items-center gap-2 whitespace-nowrap border px-2 py-1 text-left transition-colors"
           style={{
             borderColor: active || hover ? ACCENT : "rgba(255,255,255,0.18)",
@@ -244,8 +246,8 @@ function NodeMarker({
         {(hover || pinned) && (
           <div
             className="pointer-events-auto mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[52vh] overflow-y-auto border border-accent bg-background/95 p-4 text-sm leading-relaxed text-foreground shadow-2xl backdrop-blur-md"
+            onClick={() => { setHover(false); setPinned(false); }}
             onPointerEnter={() => setHover(true)}
-            onPointerLeave={() => { if (!pinned) setHover(false); }}
           >
             <div className="mb-3 flex items-baseline gap-2 border-b border-border pb-2">
               <span className="font-mono text-[10px] text-accent">{code}</span>
@@ -254,6 +256,7 @@ function NodeMarker({
             <div className="text-foreground/85">{renderCard(id)}</div>
           </div>
         )}
+        </div>
       </Html>
       )}
     </group>
