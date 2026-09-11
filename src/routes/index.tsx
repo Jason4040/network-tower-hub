@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import TowerStage from "../components/tower/TowerStage";
-import TowerPortfolio from "../components/TowerPortfolio";
+import TowerPortfolio, { CardContent } from "../components/TowerPortfolio";
 import { nodes, type NodeId } from "../data/profile";
 
 const TITLE = "Irumva Jason | Networking & Cloud Security";
@@ -34,7 +34,7 @@ function Home() {
     <main className="relative h-[100dvh] min-h-[640px] overflow-hidden bg-background">
       <h1 className="sr-only">Irumva Jason — Networking and Cloud Security Portfolio</h1>
       <div className="absolute inset-0 z-0" role="presentation">
-        <TowerStage activeNode={active} onSelect={go} selectedIndex={selectedIndex} />
+        <TowerStage activeNode={active} onSelect={go} selectedIndex={selectedIndex} renderCard={(id) => <CardContent id={id} />} />
       </div>
       <TowerPortfolio active={active} onSelect={go} />
     </main>
