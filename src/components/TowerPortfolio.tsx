@@ -67,12 +67,24 @@ export function CardContent({ id }: { id: NodeId }) {
         </div>
       );
     }
-    return <div className="space-y-4">{projects.map((project) => (
-      <article key={project.id} className="border border-border p-4">
-        <p className="font-mono text-[10px] text-accent">{project.year} / {project.status.toUpperCase()}</p>
-        <h3 className="mt-1 text-base">{project.title}</h3>
-        <p className="mt-2">{project.description}</p>
-        <div className="mt-3"><Tags items={project.technologies} /></div>
+    return <div className="grid gap-4">{projects.map((project) => (
+      <article key={project.id} className="overflow-hidden border border-border bg-surface-raised">
+        {project.image && (
+          <img
+            src={project.image}
+            alt={`${project.title} project reference`}
+            className="h-32 w-full object-cover grayscale transition-[filter] duration-300 hover:grayscale-0 sm:h-40"
+          />
+        )}
+        <div className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-mono text-[10px] text-accent">{project.year} / {project.status.toUpperCase()}</p>
+            <span className="label-tech text-right">{project.category}</span>
+          </div>
+          <h3 className="mt-2 text-base">{project.title}</h3>
+          <p className="mt-2">{project.description}</p>
+          <div className="mt-3"><Tags items={project.technologies} /></div>
+        </div>
       </article>
     ))}</div>;
   }

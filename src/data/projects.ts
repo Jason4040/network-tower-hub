@@ -36,4 +36,27 @@ export type Project = {
   featured?: boolean;
 };
 
-export const projects: Project[] = [];
+export const projects: Project[] = [
+  {
+    id: "tower-field-installation",
+    title: "Tower Field Installation",
+    description: "A communications tower study focused on structural layout, antenna placement, and practical site infrastructure.",
+    category: "Telecommunications",
+    status: "completed",
+    technologies: ["RF Systems", "Antenna Planning", "Site Infrastructure"],
+    year: "2026",
+    image: "/images/tower.jpg",
+    featured: true,
+  },
+  {
+    id: "connected-home-network",
+    title: "Connected Home Network",
+    description: "A visual concept for a resilient home network with wireless coverage, connected devices, and clean equipment organization.",
+    category: "Network Design",
+    status: "completed",
+    technologies: ["Wi-Fi Planning", "Network Security", "IoT"],
+    year: "2026",
+    image: "/images/house.jpeg",
+    featured: true,
+  },
+];

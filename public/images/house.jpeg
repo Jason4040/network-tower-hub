@@ -1,0 +1,19 @@
+make the  tower better(3d and interactive), good lighting, Let the tower look like the one provided in the image ; "tower.jpg", or even better, same color patterns, same shape more features like bulbs, Mw antennas, gps antennas, omni antennas, sector antennas and others, let it be a tower with great realism.
+
+a bit bigger, the tower should be made a bit bigger, with more metals(thicker ones) and features just like a normal tower 
+
+spaced tower; Let the tower have enough space just like you see the Three.js designed house,  some one should be able to zoom the tower and it reduces in size( not just words/text only to reduce in size) the web page should be scrollable from upper to down incase the tower has turned bigger on zoom in, to see other info cards that are on the tower foot.
+
+ add ability to switch from dark and light theme on the webpage
+
+
+on certifications node I have to be able to upload more  certifications docs and other achievements with their links,
+
+make sure each info card on  the tower in my  portfolio is updatable by me the admin Through the dashboard that is not see by others except me.On Hover or while opening a certain card make sure the opened info does not opaque the nodes , on the left side of the tower there is enough space, so make sure that when any card is clicked or hovered on, it opens in that space(aside) not on the tower itself. 
+
+
+get rid of the left and right slider buttons, the tower should be turned all sides using touch effect, not the slider buttons 
+
+the nodes should be counting, from up, the first Node(About) should be at the top, and the 2nd node next and so on, The about Node will hold the profile pic; "profile.jpg"
+
+remove theLovable ai Avatar on the url and use my profile image(profile.jpg) instead.
