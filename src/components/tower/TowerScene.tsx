@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import { useMemo, useRef, useState, memo, type ReactNode } from "react";
+import { useMemo, useRef, useState, memo } from "react";
 import * as THREE from "three";
 import { nodes, type NodeId } from "../../data/profile";
 
@@ -184,11 +184,9 @@ function NodeMarker({
   onSelect: (id: NodeId) => void;
   reduced: boolean;
   compact: boolean;
-  renderCard: (id: NodeId) => ReactNode;
 }) {
   const ref = useRef<THREE.Mesh>(null);
   const [hover, setHover] = useState(false);
-  const [pinned, setPinned] = useState(false);
   const r = 0.95 - (y / MAST_HEIGHT) * 0.4;
   const pos: [number, number, number] = [Math.cos(angle) * r, y, Math.sin(angle) * r];
 
@@ -222,7 +220,7 @@ function NodeMarker({
       >
         <button
           type="button"
-          onClick={() => { setPinned(true); onSelect(id); }}
+          onClick={() => onSelect(id)}
           onPointerEnter={() => setHover(true)}
           onPointerLeave={() => setHover(false)}
           className="flex min-h-[28px] items-center gap-2 whitespace-nowrap border px-2 py-1 text-left transition-colors"
@@ -239,26 +237,13 @@ function NodeMarker({
           <span style={{ color: ACCENT }}>{code}</span>
           <span>{label}</span>
         </button>
-        {(hover || pinned) && (
-          <div
-            className="pointer-events-auto mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[52vh] overflow-y-auto border border-accent bg-background/95 p-4 text-sm leading-relaxed text-foreground shadow-2xl backdrop-blur-md"
-            onPointerEnter={() => setHover(true)}
-            onPointerLeave={() => { if (!pinned) setHover(false); }}
-          >
-            <div className="mb-3 flex items-baseline gap-2 border-b border-border pb-2">
-              <span className="font-mono text-[10px] text-accent">{code}</span>
-              <strong className="font-display text-sm tracking-[0.08em]">{label}</strong>
-            </div>
-            <div className="text-foreground/85">{renderCard(id)}</div>
-          </div>
-        )}
       </Html>
       )}
     </group>
   );
 }
 
-function Tower({ activeNode, onSelect, reduced, compact, selectedIndex, renderCard }: SceneProps) {
+function Tower({ activeNode, onSelect, reduced, compact, selectedIndex }: SceneProps) {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   const target = useRef({ y: compact ? 6 : 5.5, rot: 0 });
@@ -325,7 +310,6 @@ function Tower({ activeNode, onSelect, reduced, compact, selectedIndex, renderCa
           onSelect={onSelect}
           reduced={reduced}
           compact={compact}
-          renderCard={renderCard}
         />
       ))}
     </group>
