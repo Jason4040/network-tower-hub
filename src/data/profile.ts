@@ -1,7 +1,6 @@
 // EDITABLE CONTENT — update these values without touching UI components.
 
 export const CV_URL = "/cv/Irumva-Jason-CV.pdf";
-export const PROFILE_IMAGE_URL = "/images/profile.jpg";
 
 export const profile = {
   name: "Irumva Jason",

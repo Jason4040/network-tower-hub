@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Html, OrbitControls } from "@react-three/drei";
-import { useMemo, useRef, useState, memo, type ReactNode } from "react";
+import { Html } from "@react-three/drei";
+import { useMemo, useRef, useState, memo } from "react";
 import * as THREE from "three";
 import { nodes, type NodeId } from "../../data/profile";
 
@@ -14,7 +14,6 @@ type SceneProps = {
   reduced: boolean;
   compact: boolean;
   selectedIndex: number;
-  renderCard: (id: NodeId) => ReactNode;
 };
 
 const MAST_HEIGHT = 13;
@@ -175,7 +174,6 @@ function NodeMarker({
   onSelect,
   reduced,
   compact,
-  renderCard,
 }: {
   id: NodeId;
   code: string;
@@ -186,11 +184,9 @@ function NodeMarker({
   onSelect: (id: NodeId) => void;
   reduced: boolean;
   compact: boolean;
-  renderCard: (id: NodeId) => ReactNode;
 }) {
   const ref = useRef<THREE.Mesh>(null);
   const [hover, setHover] = useState(false);
-  const [pinned, setPinned] = useState(false);
   const r = 0.95 - (y / MAST_HEIGHT) * 0.4;
   const pos: [number, number, number] = [Math.cos(angle) * r, y, Math.sin(angle) * r];
 
@@ -215,19 +211,18 @@ function NodeMarker({
         <sphereGeometry args={[0.06, 10, 8]} />
         <meshBasicMaterial color={ACCENT} />
       </mesh>
+      {compact ? null : (
       <Html
         position={[Math.cos(angle) * 0.4, 0.02, Math.sin(angle) * 0.4]}
         center={false}
-        distanceFactor={compact ? 13 : 16}
+        distanceFactor={16}
         zIndexRange={[10, 0]}
       >
-        <div
-          onPointerEnter={() => setHover(true)}
-          onPointerLeave={() => { setHover(false); setPinned(false); }}
-        >
         <button
           type="button"
-          onClick={() => { setPinned((current) => !current); onSelect(id); }}
+          onClick={() => onSelect(id)}
+          onPointerEnter={() => setHover(true)}
+          onPointerLeave={() => setHover(false)}
           className="flex min-h-[28px] items-center gap-2 whitespace-nowrap border px-2 py-1 text-left transition-colors"
           style={{
             borderColor: active || hover ? ACCENT : "rgba(255,255,255,0.18)",
@@ -242,26 +237,13 @@ function NodeMarker({
           <span style={{ color: ACCENT }}>{code}</span>
           <span>{label}</span>
         </button>
-        {(hover || pinned) && (
-          <div
-            className="pointer-events-auto mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[52vh] overflow-y-auto border border-accent bg-background/95 p-4 text-sm leading-relaxed text-foreground shadow-2xl backdrop-blur-md"
-            onClick={() => { setHover(false); setPinned(false); }}
-            onPointerEnter={() => setHover(true)}
-          >
-            <div className="mb-3 flex items-baseline gap-2 border-b border-border pb-2">
-              <span className="font-mono text-[10px] text-accent">{code}</span>
-              <strong className="font-display text-sm tracking-[0.08em]">{label}</strong>
-            </div>
-            <div className="text-foreground/85">{renderCard(id)}</div>
-          </div>
-        )}
-        </div>
       </Html>
+      )}
     </group>
   );
 }
 
-function Tower({ activeNode, onSelect, reduced, compact, selectedIndex, renderCard }: SceneProps) {
+function Tower({ activeNode, onSelect, reduced, compact, selectedIndex }: SceneProps) {
   const group = useRef<THREE.Group>(null);
   const { camera } = useThree();
   const target = useRef({ y: compact ? 6 : 5.5, rot: 0 });
@@ -328,7 +310,6 @@ function Tower({ activeNode, onSelect, reduced, compact, selectedIndex, renderCa
           onSelect={onSelect}
           reduced={reduced}
           compact={compact}
-          renderCard={renderCard}
         />
       ))}
     </group>
@@ -368,17 +349,6 @@ function TowerScene(props: SceneProps) {
       <pointLight position={[0, 2, 4]} intensity={12} distance={14} color="#c2551f" />
       <Ground />
       <Tower {...props} />
-      <OrbitControls
-        enablePan={false}
-        enableDamping
-        dampingFactor={0.08}
-        minDistance={props.compact ? 30 : 23}
-        maxDistance={props.compact ? 46 : 40}
-        minPolarAngle={Math.PI * 0.33}
-        maxPolarAngle={Math.PI * 0.62}
-        target={[0, props.compact ? 1 : 2, 0]}
-        enabled={!props.reduced}
-      />
     </Canvas>
   );
 }

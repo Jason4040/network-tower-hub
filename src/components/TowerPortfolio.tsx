@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Download, ExternalLink, Mail, MapPin, Phone, Sun, Moon } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Download,
+  ExternalLink,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import { certifications } from "../data/certifications";
 import { contact } from "../data/contact";
 import { education } from "../data/education";
-import { CV_URL, nodes, PROFILE_IMAGE_URL, profile, type NodeId } from "../data/profile";
+import { CV_URL, nodes, profile, type NodeId } from "../data/profile";
 import { projects } from "../data/projects";
 import { skills } from "../data/skills";
 
@@ -25,15 +33,10 @@ function Tags({ items }: { items: readonly string[] }) {
   );
 }
 
-export function CardContent({ id }: { id: NodeId }) {
+function CardContent({ id }: { id: NodeId }) {
   if (id === "about") {
     return (
       <>
-        <img
-          src={PROFILE_IMAGE_URL}
-          alt={`${profile.name} portrait`}
-          className="mb-4 aspect-[4/3] w-full object-cover object-[center_24%] grayscale"
-        />
         {profile.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         <Tags items={profile.directions} />
         <div className="border-l-2 border-accent pl-3">
@@ -67,24 +70,12 @@ export function CardContent({ id }: { id: NodeId }) {
         </div>
       );
     }
-    return <div className="grid gap-4">{projects.map((project) => (
-      <article key={project.id} className="overflow-hidden border border-border bg-surface-raised">
-        {project.image && (
-          <img
-            src={project.image}
-            alt={`${project.title} project reference`}
-            className="h-32 w-full object-cover grayscale transition-[filter] duration-300 hover:grayscale-0 sm:h-40"
-          />
-        )}
-        <div className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <p className="font-mono text-[10px] text-accent">{project.year} / {project.status.toUpperCase()}</p>
-            <span className="label-tech text-right">{project.category}</span>
-          </div>
-          <h3 className="mt-2 text-base">{project.title}</h3>
-          <p className="mt-2">{project.description}</p>
-          <div className="mt-3"><Tags items={project.technologies} /></div>
-        </div>
+    return <div className="space-y-4">{projects.map((project) => (
+      <article key={project.id} className="border border-border p-4">
+        <p className="font-mono text-[10px] text-accent">{project.year} / {project.status.toUpperCase()}</p>
+        <h3 className="mt-1 text-base">{project.title}</h3>
+        <p className="mt-2">{project.description}</p>
+        <div className="mt-3"><Tags items={project.technologies} /></div>
       </article>
     ))}</div>;
   }
@@ -147,11 +138,6 @@ export function CardContent({ id }: { id: NodeId }) {
 export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps) {
   const activeIndex = nodes.findIndex((node) => node.id === active);
   const [paused, setPaused] = useState(false);
-  const [lightMode, setLightMode] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("light", lightMode);
-  }, [lightMode]);
 
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -174,6 +160,29 @@ export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps
     return () => window.removeEventListener("keydown", onKey);
   }, [activeIndex, onSelect]);
 
+  const positions = useMemo(() => nodes.map((node, index) => {
+    const relative = (index - activeIndex + nodes.length) % nodes.length;
+    const signed = relative > nodes.length / 2 ? relative - nodes.length : relative;
+    return { node, signed };
+  }), [activeIndex]);
+
+  const move = (step: number) => {
+    const next = nodes[(activeIndex + step + nodes.length) % nodes.length];
+    if (next) onSelect(next.id);
+    setPaused(true);
+  };
+
+  const current = nodes[activeIndex] ?? nodes[0];
+  const cardSlots: Record<number, string> = {
+    0: "left-[5%] top-[19%] z-20 opacity-100",
+    1: "right-[6%] top-[26%] z-10 opacity-70",
+    2: "right-[4%] top-[50%] z-10 opacity-45",
+    3: "right-[21%] top-[73%] z-0 opacity-25",
+    [-1]: "left-[6%] top-[48%] z-10 opacity-70",
+    [-2]: "left-[20%] top-[72%] z-0 opacity-35",
+    [-3]: "right-[32%] top-[82%] z-0 opacity-20",
+  };
+
   return (
     <div className="pointer-events-none absolute inset-0 z-20" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
       <div className="absolute left-4 top-4 pointer-events-auto sm:left-7 sm:top-6">
@@ -183,16 +192,36 @@ export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps
         </p>
       </div>
 
-      <div className="pointer-events-auto absolute right-4 top-4 sm:right-7 sm:top-6">
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-10 rounded-none border-border-strong bg-background/90"
-          onClick={() => setLightMode((current) => !current)}
-          aria-label={lightMode ? "Switch to dark theme" : "Switch to light theme"}
-        >
-          {lightMode ? <Moon /> : <Sun />}
-        </Button>
+      <div className="hidden lg:block" aria-label="Portfolio card orbit">
+        {positions.map(({ node, signed }) => (
+          <Button
+            key={node.id}
+            variant="outline"
+            onClick={() => { onSelect(node.id); setPaused(true); }}
+            className={`absolute pointer-events-auto h-auto w-44 justify-start rounded-none border bg-background/90 px-4 py-3 text-left backdrop-blur transition-all duration-700 ${cardSlots[signed] ?? "pointer-events-none opacity-0"} ${signed === 0 ? "border-accent" : "border-border"}`}
+            aria-pressed={signed === 0}
+          >
+            <span className="font-mono text-[10px] text-accent">{node.code}</span>
+            <span className="ml-auto font-display text-xs tracking-[0.08em] text-foreground">{node.label}</span>
+          </Button>
+        ))}
+      </div>
+
+      <section className="pointer-events-auto absolute bottom-20 left-4 right-4 max-h-[39vh] overflow-y-auto border border-border bg-background/94 p-4 backdrop-blur-md sm:left-7 sm:right-auto sm:w-[28rem] sm:p-5 lg:bottom-8 lg:left-auto lg:right-8 lg:top-[16%] lg:max-h-[68vh] lg:w-[24rem]" aria-live="polite">
+        <header className="mb-4 flex items-baseline gap-3 border-b border-border pb-3">
+          <span className="font-mono text-[10px] text-accent">{current.code}</span>
+          <h2 className="text-xl">{current.label}</h2>
+          <span className="ml-auto font-mono text-[10px] text-muted-foreground">{String(activeIndex + 1).padStart(2, "0")} / {String(nodes.length).padStart(2, "0")}</span>
+        </header>
+        <div className="space-y-4 text-sm leading-relaxed text-foreground/85">
+          <CardContent id={current.id} />
+        </div>
+      </section>
+
+      <div className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
+        <Button variant="outline" size="icon" className="size-11 rounded-none border-border-strong bg-background/90" onClick={() => move(-1)} aria-label="Previous portfolio card"><ArrowLeft /></Button>
+        <div className="flex gap-1 px-2" aria-hidden="true">{nodes.map((node) => <span key={node.id} className={`h-1 w-4 ${node.id === active ? "bg-accent" : "bg-border-strong"}`} />)}</div>
+        <Button variant="outline" size="icon" className="size-11 rounded-none border-border-strong bg-background/90" onClick={() => move(1)} aria-label="Next portfolio card"><ArrowRight /></Button>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import TowerFallback from "./TowerFallback";
-import type { ReactNode } from "react";
 import type { NodeId } from "../../data/profile";
 
 const TowerScene = lazy(() => import("./TowerScene"));
@@ -21,12 +20,10 @@ export default function TowerStage({
   activeNode,
   onSelect,
   selectedIndex,
-  renderCard,
 }: {
   activeNode: NodeId;
   onSelect: (id: NodeId) => void;
   selectedIndex: number;
-  renderCard: (id: NodeId) => ReactNode;
 }) {
   const [mode, setMode] = useState<"loading" | "3d" | "fallback">("loading");
   const [reduced, setReduced] = useState(false);
@@ -60,11 +57,10 @@ export default function TowerStage({
           reduced={reduced}
           compact={compact}
           selectedIndex={selectedIndex}
-          renderCard={renderCard}
         />
       </Suspense>
     );
-  }, [mode, activeNode, onSelect, reduced, compact, selectedIndex, renderCard]);
+  }, [mode, activeNode, onSelect, reduced, compact, selectedIndex]);
 
   return <div className="h-full w-full">{content}</div>;
 }
