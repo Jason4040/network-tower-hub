@@ -1,13 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Download,
-  ExternalLink,
-  Mail,
-  MapPin,
-  Phone,
-} from "lucide-react";
+import { Download, ExternalLink, Mail, MapPin, Phone, Sun, Moon } from "lucide-react";
 import { Button } from "./ui/button";
 import { certifications } from "../data/certifications";
 import { contact } from "../data/contact";
@@ -143,6 +135,11 @@ export function CardContent({ id }: { id: NodeId }) {
 export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps) {
   const activeIndex = nodes.findIndex((node) => node.id === active);
   const [paused, setPaused] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", lightMode);
+  }, [lightMode]);
 
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -165,12 +162,6 @@ export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps
     return () => window.removeEventListener("keydown", onKey);
   }, [activeIndex, onSelect]);
 
-  const move = (step: number) => {
-    const next = nodes[(activeIndex + step + nodes.length) % nodes.length];
-    if (next) onSelect(next.id);
-    setPaused(true);
-  };
-
   return (
     <div className="pointer-events-none absolute inset-0 z-20" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
       <div className="absolute left-4 top-4 pointer-events-auto sm:left-7 sm:top-6">
@@ -180,10 +171,16 @@ export default function TowerPortfolio({ active, onSelect }: TowerPortfolioProps
         </p>
       </div>
 
-      <div className="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
-        <Button variant="outline" size="icon" className="size-11 rounded-none border-border-strong bg-background/90" onClick={() => move(-1)} aria-label="Previous portfolio card"><ArrowLeft /></Button>
-        <div className="flex gap-1 px-2" aria-hidden="true">{nodes.map((node) => <span key={node.id} className={`h-1 w-4 ${node.id === active ? "bg-accent" : "bg-border-strong"}`} />)}</div>
-        <Button variant="outline" size="icon" className="size-11 rounded-none border-border-strong bg-background/90" onClick={() => move(1)} aria-label="Next portfolio card"><ArrowRight /></Button>
+      <div className="pointer-events-auto absolute right-4 top-4 sm:right-7 sm:top-6">
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-10 rounded-none border-border-strong bg-background/90"
+          onClick={() => setLightMode((current) => !current)}
+          aria-label={lightMode ? "Switch to dark theme" : "Switch to light theme"}
+        >
+          {lightMode ? <Moon /> : <Sun />}
+        </Button>
       </div>
     </div>
   );
