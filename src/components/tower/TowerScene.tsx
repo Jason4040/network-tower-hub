@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { Html, OrbitControls } from "@react-three/drei";
 import { useMemo, useRef, useState, memo, type ReactNode } from "react";
 import * as THREE from "three";
 import { nodes, type NodeId } from "../../data/profile";
@@ -215,11 +215,10 @@ function NodeMarker({
         <sphereGeometry args={[0.06, 10, 8]} />
         <meshBasicMaterial color={ACCENT} />
       </mesh>
-      {compact ? null : (
       <Html
         position={[Math.cos(angle) * 0.4, 0.02, Math.sin(angle) * 0.4]}
         center={false}
-        distanceFactor={16}
+        distanceFactor={compact ? 13 : 16}
         zIndexRange={[10, 0]}
       >
         <div
@@ -258,7 +257,6 @@ function NodeMarker({
         )}
         </div>
       </Html>
-      )}
     </group>
   );
 }
@@ -370,6 +368,17 @@ function TowerScene(props: SceneProps) {
       <pointLight position={[0, 2, 4]} intensity={12} distance={14} color="#c2551f" />
       <Ground />
       <Tower {...props} />
+      <OrbitControls
+        enablePan={false}
+        enableDamping
+        dampingFactor={0.08}
+        minDistance={props.compact ? 30 : 23}
+        maxDistance={props.compact ? 46 : 40}
+        minPolarAngle={Math.PI * 0.33}
+        maxPolarAngle={Math.PI * 0.62}
+        target={[0, props.compact ? 1 : 2, 0]}
+        enabled={!props.reduced}
+      />
     </Canvas>
   );
 }
