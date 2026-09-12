@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { certifications } from "../data/certifications";
 import { contact } from "../data/contact";
 import { education } from "../data/education";
-import { CV_URL, nodes, profile, type NodeId } from "../data/profile";
+import { CV_URL, nodes, PROFILE_IMAGE_URL, profile, type NodeId } from "../data/profile";
 import { projects } from "../data/projects";
 import { skills } from "../data/skills";
 
@@ -37,6 +37,11 @@ export function CardContent({ id }: { id: NodeId }) {
   if (id === "about") {
     return (
       <>
+        <img
+          src={PROFILE_IMAGE_URL}
+          alt={`${profile.name} portrait`}
+          className="mb-4 aspect-[4/3] w-full object-cover object-[center_24%] grayscale"
+        />
         {profile.about.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         <Tags items={profile.directions} />
         <div className="border-l-2 border-accent pl-3">
