@@ -11,6 +11,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ContentProvider } from "../lib/content-context";
+import { ThemeProvider } from "../lib/theme";
+import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -76,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "Irumva Jason | Networking & Cloud Security" },
       { name: "author", content: "Irumva Jason" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -92,7 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Share+Tech+Mono&family=Barlow:wght@400;500;600&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/profile.jpg", type: "image/jpeg" },
     ],
   }),
   shellComponent: RootShell,
@@ -106,6 +109,12 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('nth-theme')==='light')document.documentElement.classList.add('light')}catch(e){}",
+          }}
+        />
       </head>
       <body>
         {children}
@@ -120,8 +129,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ThemeProvider>
+        <ContentProvider>
+          <Outlet />
+          <Toaster />
+        </ContentProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

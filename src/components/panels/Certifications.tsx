@@ -17,6 +17,16 @@ export default function Certifications() {
                 <li key={i}>{i}</li>
               ))}
             </ul>
+            {c.url ? (
+              <a href={c.url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-accent hover:underline">
+                Open link
+              </a>
+            ) : null}
+            {c.fileUrl ? (
+              <a href={c.fileUrl} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-accent hover:underline">
+                {c.fileName || "View document"}
+              </a>
+            ) : null}
           </TechPanel>
         ))}
       </div>

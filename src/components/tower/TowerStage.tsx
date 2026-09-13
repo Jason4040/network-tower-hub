@@ -1,9 +1,10 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { Component, lazy, Suspense, useLayoutEffect, useState, type ReactNode } from "react";
 import TowerFallback from "./TowerFallback";
-import type { ReactNode } from "react";
 import type { NodeId } from "../../data/profile";
 
-const TowerScene = lazy(() => import("./TowerScene"));
+const loadTowerScene = () => import("./TowerScene");
+const TowerScene = lazy(loadTowerScene);
+if (typeof window !== "undefined") void loadTowerScene();
 
 function hasWebGL() {
   try {
@@ -17,22 +18,56 @@ function hasWebGL() {
   }
 }
 
+function ScenePlaceholder() {
+  return <div className="absolute inset-0 h-full w-full bg-background" aria-hidden />;
+}
+
+class SceneErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean; message: string }> {
+  state = { failed: false, message: "" };
+
+  static getDerivedStateFromError(error: Error) {
+    return { failed: true, message: error?.message || "Tower scene failed" };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error(error);
+    if (typeof window !== "undefined") {
+      (window as Window & { __towerError?: string }).__towerError = `${error.message}\n${error.stack ?? ""}`;
+    }
+  }
+
+  render() {
+    if (this.state.failed) {
+      return (
+        <div className="absolute inset-0 h-full w-full" data-tower-error={this.state.message}>
+          <TowerFallback />
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function TowerStage({
   activeNode,
+  pinnedNode,
   onSelect,
-  selectedIndex,
-  renderCard,
+  onHover,
+  dark,
+  photoUrl,
 }: {
   activeNode: NodeId;
+  pinnedNode: NodeId;
   onSelect: (id: NodeId) => void;
-  selectedIndex: number;
-  renderCard: (id: NodeId) => ReactNode;
+  onHover: (id: NodeId | null) => void;
+  dark: boolean;
+  photoUrl: string;
 }) {
-  const [mode, setMode] = useState<"loading" | "3d" | "fallback">("loading");
+  const [mode, setMode] = useState<"boot" | "3d" | "fallback">("boot");
   const [reduced, setReduced] = useState(false);
   const [compact, setCompact] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const mqSmall = window.matchMedia("(max-width: 1024px)");
     const sync = () => {
@@ -49,22 +84,23 @@ export default function TowerStage({
     };
   }, []);
 
-  const content = useMemo(() => {
-    if (mode === "fallback") return <TowerFallback />;
-    if (mode === "loading") return null;
-    return (
-      <Suspense fallback={<TowerFallback />}>
+  if (mode === "fallback") return <TowerFallback />;
+  if (mode === "boot") return <ScenePlaceholder />;
+
+  return (
+    <SceneErrorBoundary>
+      <Suspense fallback={<ScenePlaceholder />}>
         <TowerScene
           activeNode={activeNode}
+          pinnedNode={pinnedNode}
           onSelect={onSelect}
+          onHover={onHover}
           reduced={reduced}
           compact={compact}
-          selectedIndex={selectedIndex}
-          renderCard={renderCard}
+          dark={dark}
+          photoUrl={photoUrl}
         />
       </Suspense>
-    );
-  }, [mode, activeNode, onSelect, reduced, compact, selectedIndex, renderCard]);
-
-  return <div className="h-full w-full">{content}</div>;
+    </SceneErrorBoundary>
+  );
 }

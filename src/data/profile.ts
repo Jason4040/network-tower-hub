@@ -7,6 +7,7 @@ export const profile = {
   role: "Networking & Communication Systems Student",
   aspiration: "Aspiring Cloud Security Engineer",
   location: "Kigali, Rwanda",
+  photoUrl: "/profile.jpg",
   statement:
     "Building practical networking expertise while progressing toward Cloud Security Engineering.",
   status: "ONLINE",

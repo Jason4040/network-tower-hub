@@ -19,6 +19,10 @@
   --color-accent: var(--accent);
   --color-accent-dim: var(--accent-dim);
   --color-accent-foreground: var(--accent-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   --font-display: "Chakra Petch", "Segoe UI", sans-serif;
   --font-mono: "Share Tech Mono", ui-monospace, monospace;
@@ -39,7 +43,30 @@
   --accent: oklch(0.63 0.16 45);
   --accent-dim: oklch(0.45 0.1 45);
   --accent-foreground: oklch(0.14 0.004 60);
+  --primary: oklch(0.63 0.16 45);
+  --primary-foreground: oklch(0.14 0.004 60);
+  --input: oklch(0.3 0.005 60);
+  --ring: oklch(0.63 0.16 45);
   color-scheme: dark;
+}
+
+html.light {
+  --background: oklch(0.96 0.006 80);
+  --surface: oklch(0.99 0.003 80);
+  --surface-raised: oklch(0.94 0.006 80);
+  --foreground: oklch(0.2 0.01 60);
+  --muted: oklch(0.9 0.006 80);
+  --muted-foreground: oklch(0.42 0.01 60);
+  --border: oklch(0.84 0.008 80);
+  --border-strong: oklch(0.7 0.01 70);
+  --accent: oklch(0.58 0.16 45);
+  --accent-dim: oklch(0.5 0.12 45);
+  --accent-foreground: oklch(0.99 0.002 80);
+  --primary: oklch(0.58 0.16 45);
+  --primary-foreground: oklch(0.99 0.002 80);
+  --input: oklch(0.84 0.008 80);
+  --ring: oklch(0.58 0.16 45);
+  color-scheme: light;
 }
 
 @layer base {
@@ -57,6 +84,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    overflow-y: auto;
   }
 
   h1,
@@ -124,4 +152,85 @@
 
 @utility pulse-dot {
   animation: node-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes connector-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes node-card-fall {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate3d(var(--fall-x, 40px), 46vh, 0) rotate(var(--fall-rot, 10deg));
+  }
+}
+
+@keyframes node-card-arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--arrive-x, -28px), -16px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.node-leader-line {
+  stroke: color-mix(in oklab, var(--accent) 40%, transparent);
+  stroke-width: 1;
+}
+
+.node-leader-line[data-active="true"] {
+  stroke: var(--accent);
+  stroke-width: 1.45;
+}
+
+.node-leader-dot {
+  fill: color-mix(in oklab, var(--accent) 65%, var(--foreground));
+}
+
+.node-leader-dot[data-active="true"] {
+  fill: var(--accent);
+}
+
+.node-callout path[data-callout="under"] {
+  stroke: color-mix(in oklab, var(--background) 78%, black);
+  stroke-width: 3.2;
+}
+
+.node-callout path[data-callout="line"] {
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.node-callout[data-ready="true"] path[data-callout="line"] {
+  animation: connector-draw 0.55s ease-out forwards;
+}
+
+.node-callout circle,
+.node-callout rect {
+  fill: var(--accent);
+}
+
+.node-card-fall {
+  transform-origin: 50% 0%;
+  animation: node-card-fall 0.72s cubic-bezier(0.42, 0.02, 0.82, 0.22) forwards;
+}
+
+.node-card-arrive {
+  animation: node-card-arrive 0.46s cubic-bezier(0.2, 0.72, 0.2, 1) both;
 }
